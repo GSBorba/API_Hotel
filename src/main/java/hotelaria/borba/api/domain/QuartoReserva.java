@@ -29,4 +29,11 @@ public class QuartoReserva {
         this.quarto = quarto;
         this.reserva = reserva;
     }
+
+    public void atualizarInformacoes(Quarto quarto) {
+        if(quarto != null) {
+            this.quarto = quarto;
+            this.precoDiaria = quarto.getPreco_diaria();
+        }
+    }
 }

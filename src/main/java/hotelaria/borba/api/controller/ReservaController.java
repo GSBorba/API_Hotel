@@ -6,7 +6,7 @@ import hotelaria.borba.api.dto.reserva.DadosCadastroReserva;
 import hotelaria.borba.api.dto.reserva.DadosDetalhamentoReserva;
 import hotelaria.borba.api.dto.reserva.DadosListagemReserva;
 import hotelaria.borba.api.repository.ReservaRepository;
-import hotelaria.borba.api.service.ReservaService;
+import hotelaria.borba.api.service.reserva.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

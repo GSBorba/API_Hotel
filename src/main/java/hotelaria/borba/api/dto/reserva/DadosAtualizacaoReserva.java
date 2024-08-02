@@ -1,6 +1,6 @@
 package hotelaria.borba.api.dto.reserva;
 
-import hotelaria.borba.api.dto.quarto_reserva.DadosAtualizacaoQuartoReserva;
+import hotelaria.borba.api.dto.quarto_reserva.DTOsAtualizacaoQuartoReserva;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -11,5 +11,5 @@ public record DadosAtualizacaoReserva(
         Long id,
         LocalDateTime checkin,
         LocalDateTime checkout,
-        List<DadosAtualizacaoQuartoReserva> quartos) {
+        DTOsAtualizacaoQuartoReserva quartos) {
 }

@@ -28,7 +28,7 @@ public class Reserva {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "Reserva", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<QuartoReserva> quartoReservas;
 
     public Reserva(LocalDateTime checkin, LocalDateTime checkout, Cliente cliente) {

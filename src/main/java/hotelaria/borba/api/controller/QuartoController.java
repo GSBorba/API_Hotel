@@ -5,7 +5,7 @@ import hotelaria.borba.api.dto.quarto.DadosAtualizacaoQuarto;
 import hotelaria.borba.api.dto.quarto.DadosCadastroQuarto;
 import hotelaria.borba.api.dto.quarto.DadosDetalhamentoQuarto;
 import hotelaria.borba.api.repository.QuartoRepository;
-import hotelaria.borba.api.service.QuartoService;
+import hotelaria.borba.api.service.quarto.QuartoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

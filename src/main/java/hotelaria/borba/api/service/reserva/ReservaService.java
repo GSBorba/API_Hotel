@@ -1,9 +1,11 @@
-package hotelaria.borba.api.service;
+package hotelaria.borba.api.service.reserva;
 
 import hotelaria.borba.api.domain.Cliente;
 import hotelaria.borba.api.domain.Quarto;
 import hotelaria.borba.api.domain.QuartoReserva;
 import hotelaria.borba.api.domain.Reserva;
+import hotelaria.borba.api.dto.quarto_reserva.DTOsAtualizacaoQuartoReserva;
+import hotelaria.borba.api.dto.quarto_reserva.DadosAtualizacaoQuartoReserva;
 import hotelaria.borba.api.dto.quarto_reserva.DadosCadastroQuartoReserva;
 import hotelaria.borba.api.dto.reserva.DadosAtualizacaoReserva;
 import hotelaria.borba.api.dto.reserva.DadosCadastroReserva;
@@ -68,8 +70,28 @@ public class ReservaService {
 
         reserva.atualizarInformacoes(dados);
 
-        //Regra de negócio atualizar quarto
+        atualizarQuarto(dados.quartos(), reserva);
 
         return reserva;
+    }
+
+    public void atualizarQuarto(DTOsAtualizacaoQuartoReserva dados, Reserva reserva) {
+        if(dados.cadastroQuartoReserva() != null) {
+            adicionarQuarto(dados.cadastroQuartoReserva(), reserva);
+        }
+        if(dados.atualizacaoQuartoReserva() != null) {
+            for(DadosAtualizacaoQuartoReserva quartos : dados.atualizacaoQuartoReserva()) {
+                Quarto quarto = quartoRepository.findById(quartos.id_quarto()).orElseThrow(() -> new ValidationException("Id do quarto informado não existe!"));
+                QuartoReserva quartoReserva = quartoReservaRepository.findById(quartos.id()).orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
+
+                quartoReserva.atualizarInformacoes(quarto);
+            }
+        }
+        if(dados.deletarQuartoReserva() != null) {
+            for(Long idsToRemove : dados.deletarQuartoReserva()) {
+                quartoReservaRepository.findById(idsToRemove).orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
+                quartoReservaRepository.deleteById(idsToRemove);
+            }
+        }
     }
 }

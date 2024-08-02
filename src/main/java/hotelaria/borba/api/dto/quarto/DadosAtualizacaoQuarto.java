@@ -1,7 +1,6 @@
 package hotelaria.borba.api.dto.quarto;
 
-import hotelaria.borba.api.dto.cama_quarto.DadosAtualizacaoCamaQuarto;
-import hotelaria.borba.api.dto.cama_quarto.DadosCadastroCamaQuarto;
+import hotelaria.borba.api.dto.cama_quarto.DTOsAtualizacaoCamaQuarto;
 import hotelaria.borba.api.enums.TipoQuarto;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,6 +14,6 @@ public record DadosAtualizacaoQuarto(
         TipoQuarto tipoQuarto,
         BigDecimal preco_diaria,
         String descricao,
-        List<DadosAtualizacaoCamaQuarto> camas
+        DTOsAtualizacaoCamaQuarto camas
 ) {
 }
