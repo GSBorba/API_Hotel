@@ -3,14 +3,14 @@ package hotelaria.borba.api.dto.reserva;
 import hotelaria.borba.api.dto.quarto_reserva.DadosCadastroQuartoReserva;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public record DadosCadastroReserva(
         @NotNull
-        LocalDateTime checkin,
+        LocalDate checkin,
         @NotNull
-        LocalDateTime checkout,
+        LocalDate checkout,
         @NotNull
         Long id_cliente,
         @NotNull

@@ -25,7 +25,8 @@ public class AvaliacaoController {
     private final AvaliacaoService service;
 
     @Autowired
-    public AvaliacaoController(AvaliacaoRepository repository, AvaliacaoService service) {
+    public AvaliacaoController(AvaliacaoRepository repository,
+                               AvaliacaoService service) {
         this.repository = repository;
         this.service = service;
     }

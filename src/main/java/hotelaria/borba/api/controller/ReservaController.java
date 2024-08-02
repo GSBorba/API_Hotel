@@ -26,7 +26,8 @@ public class ReservaController {
     private final ReservaService service;
 
     @Autowired
-    public ReservaController(ReservaRepository repository, ReservaService service) {
+    public ReservaController(ReservaRepository repository,
+                             ReservaService service) {
         this.repository = repository;
         this.service = service;
     }

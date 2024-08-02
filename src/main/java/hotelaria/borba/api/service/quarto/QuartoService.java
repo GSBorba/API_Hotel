@@ -13,7 +13,8 @@ import hotelaria.borba.api.repository.CamaQuartoRepository;
 import hotelaria.borba.api.repository.CamaRepository;
 import hotelaria.borba.api.repository.HotelRepository;
 import hotelaria.borba.api.repository.QuartoRepository;
-import hotelaria.borba.api.service.quarto.validacoesCadastro.ValidadorCadastroDeQuartos;
+import hotelaria.borba.api.service.quarto.validacoes_atualizacao.ValidadorAtualizacaoDeQuartos;
+import hotelaria.borba.api.service.quarto.validacoes_cadastro.ValidadorCadastroDeQuartos;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,22 @@ public class QuartoService {
     private final HotelRepository hotelRepository;
     private final CamaRepository camaRepository;
     private final CamaQuartoRepository camaQuartoRepository;
-    private final List<ValidadorCadastroDeQuartos> validadorCadastro;
+    private final List<ValidadorCadastroDeQuartos> validadorCadastroDeQuartos;
+    private final List<ValidadorAtualizacaoDeQuartos> validadorAtualizacaoDeQuartos;
 
     @Autowired
-    public QuartoService(QuartoRepository quartoRepository, HotelRepository hotelRepository, CamaRepository camaRepository, CamaQuartoRepository camaQuartoRepository, List<ValidadorCadastroDeQuartos> validadorCadastro) {
+    public QuartoService(QuartoRepository quartoRepository,
+                         HotelRepository hotelRepository,
+                         CamaRepository camaRepository,
+                         CamaQuartoRepository camaQuartoRepository,
+                         List<ValidadorCadastroDeQuartos> validadorCadastro,
+                         List<ValidadorAtualizacaoDeQuartos> validadorAtualizacao) {
         this.quartoRepository = quartoRepository;
         this.hotelRepository = hotelRepository;
         this.camaRepository = camaRepository;
         this.camaQuartoRepository = camaQuartoRepository;
-        this.validadorCadastro = validadorCadastro;
+        this.validadorCadastroDeQuartos = validadorCadastro;
+        this.validadorAtualizacaoDeQuartos = validadorAtualizacao;
     }
 
     public Quarto validarCadastro(DadosCadastroQuarto dados) {
@@ -43,7 +51,7 @@ public class QuartoService {
             throw new ValidationException("Id do hotel informado não existe!");
         }
 
-        validadorCadastro.forEach(v -> v.validar(dados));
+        validadorCadastroDeQuartos.forEach(v -> v.validar(dados)); // Preco diaria
 
         Hotel hotel = hotelRepository.getReferenceById(dados.id_hotel());
         Quarto quarto = new Quarto(dados.numero(), dados.tipoQuarto(), dados.preco_diaria(), dados.descricao(), hotel);
@@ -68,7 +76,7 @@ public class QuartoService {
     public Quarto validarAtualizacao(DadosAtualizacaoQuarto dados) {
         Quarto quarto = quartoRepository.getReferenceById(dados.id());
 
-        //Adicionar regra de negócio para não permitir adicionar um quarto com o mesmo numero de outro no mesmo hotel
+        validadorAtualizacaoDeQuartos.forEach(v -> v.validar(dados));
 
         quarto.atualizarInformacoes(dados);
         atualizarCama(dados.camas(), quarto);

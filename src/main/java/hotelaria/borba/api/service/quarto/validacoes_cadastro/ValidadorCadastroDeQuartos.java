@@ -1,4 +1,4 @@
-package hotelaria.borba.api.service.quarto.validacoesCadastro;
+package hotelaria.borba.api.service.quarto.validacoes_cadastro;
 
 import hotelaria.borba.api.dto.quarto.DadosCadastroQuarto;
 

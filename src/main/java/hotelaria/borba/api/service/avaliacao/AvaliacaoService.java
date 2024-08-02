@@ -17,7 +17,8 @@ public class AvaliacaoService {
     private final ReservaRepository reservaRepository;
 
     @Autowired
-    public AvaliacaoService(AvaliacaoRepository avaliacaoRepository, ReservaRepository reservaRepository) {
+    public AvaliacaoService(AvaliacaoRepository avaliacaoRepository,
+                            ReservaRepository reservaRepository) {
         this.avaliacaoRepository = avaliacaoRepository;
         this.reservaRepository = reservaRepository;
     }

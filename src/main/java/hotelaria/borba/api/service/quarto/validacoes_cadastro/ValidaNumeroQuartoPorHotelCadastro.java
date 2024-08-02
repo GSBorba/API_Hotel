@@ -1,4 +1,4 @@
-package hotelaria.borba.api.service.quarto.validacoesCadastro;
+package hotelaria.borba.api.service.quarto.validacoes_cadastro;
 
 import hotelaria.borba.api.domain.Hotel;
 import hotelaria.borba.api.domain.Quarto;
@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidaNumeroQuartoPorHotel implements ValidadorCadastroDeQuartos{
+public class ValidaNumeroQuartoPorHotelCadastro implements ValidadorCadastroDeQuartos{
 
     private final HotelRepository hotelRepository;
 
     @Autowired
-    public ValidaNumeroQuartoPorHotel(HotelRepository hotelRepository) {
+    public ValidaNumeroQuartoPorHotelCadastro(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
     }
 

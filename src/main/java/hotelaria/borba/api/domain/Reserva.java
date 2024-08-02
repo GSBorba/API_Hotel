@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,8 +21,8 @@ public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime checkin;
-    private LocalDateTime checkout;
+    private LocalDate checkin;
+    private LocalDate checkout;
     private BigDecimal valor;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente")
@@ -31,9 +31,10 @@ public class Reserva {
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<QuartoReserva> quartoReservas;
 
-    public Reserva(LocalDateTime checkin, LocalDateTime checkout, Cliente cliente) {
+    public Reserva(LocalDate checkin, LocalDate checkout, BigDecimal valor, Cliente cliente) {
         this.checkin = checkin;
         this.checkout = checkout;
+        this.valor = valor;
         this.cliente = cliente;
         this.quartoReservas = new HashSet<>();
     }

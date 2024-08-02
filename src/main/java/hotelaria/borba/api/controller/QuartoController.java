@@ -25,7 +25,8 @@ public class QuartoController {
     private final QuartoService service;
 
     @Autowired
-    public QuartoController(QuartoRepository repository, QuartoService service) {
+    public QuartoController(QuartoRepository repository,
+                            QuartoService service) {
         this.repository = repository;
         this.service = service;
     }
