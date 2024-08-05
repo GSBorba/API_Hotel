@@ -20,6 +20,7 @@ import java.net.URI;
 @RestController
 @RequestMapping("cliente")
 public class ClienteController {
+
     private final ClienteRepository repository;
 
     @Autowired
