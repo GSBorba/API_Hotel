@@ -32,7 +32,6 @@ CREATE TABLE cliente (
     telefone varchar(15)  NOT NULL,
     email varchar(255)  NULL,
     ativo boolean  NOT NULL DEFAULT true,
-    id_endereco int  NOT NULL,
     CONSTRAINT cliente_pk PRIMARY KEY (id)
 );
 
@@ -83,8 +82,8 @@ CREATE TABLE quarto_reserva (
 -- Table: reserva
 CREATE TABLE reserva (
     id serial  NOT NULL,
-    checkin timestamp  NOT NULL,
-    checkout timestamp  NOT NULL,
+    checkin date  NOT NULL,
+    checkout date  NOT NULL,
     valor decimal(10,2)  NOT NULL,
     id_cliente int  NOT NULL,
     CONSTRAINT reserva_pk PRIMARY KEY (id)
@@ -119,14 +118,6 @@ ALTER TABLE cama_quarto ADD CONSTRAINT cama_quarto_cama
 ALTER TABLE cama_quarto ADD CONSTRAINT cama_quarto_quarto
     FOREIGN KEY (id_quarto)
     REFERENCES quarto (id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
--- Reference: cliente_endereco (table: cliente)
-ALTER TABLE cliente ADD CONSTRAINT cliente_endereco
-    FOREIGN KEY (id_endereco)
-    REFERENCES endereco (id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;

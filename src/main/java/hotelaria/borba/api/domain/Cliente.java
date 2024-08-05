@@ -26,9 +26,6 @@ public class Cliente {
     private String telefone;
     private String email;
     private Boolean ativo;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "id_endereco")
-    private Endereco endereco;
 
     @OneToMany(mappedBy = "cliente")
     private Set<Reserva> reservas;
@@ -39,7 +36,6 @@ public class Cliente {
         this.telefone = dados.telefone();
         this.email = dados.email();
         this.ativo = true;
-        this.endereco = new Endereco(dados.endereco());
     }
 
     public void atualizarInformacoes(DadosAtualizacaoCliente dados) {
@@ -51,9 +47,6 @@ public class Cliente {
         }
         if(dados.ativo() != null && dados.ativo()) {
             this.ativo = true;
-        }
-        if(dados.endereco() != null) {
-            this.endereco.atualizarDados(dados.endereco());
         }
     }
 

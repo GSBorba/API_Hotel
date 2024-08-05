@@ -52,7 +52,6 @@ public class ReservaService {
             throw new ValidationException("Id do cliente informado não existe!");
         }
 
-        //Adicionar aqui as regras de negócio
         validadorCadastroDeReservas.forEach(v -> v.validar(dados));
 
         Cliente cliente = clienteRepository.getReferenceById(dados.id_cliente());
@@ -109,7 +108,8 @@ public class ReservaService {
         }
         if(dados.deletarQuartoReserva() != null) {
             for(Long idsToRemove : dados.deletarQuartoReserva()) {
-                quartoReservaRepository.findById(idsToRemove).orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
+                QuartoReserva quartoReserva = quartoReservaRepository.findById(idsToRemove).orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
+                valor.subtract(quartoReserva.getPrecoDiaria());
                 quartoReservaRepository.deleteById(idsToRemove);
             }
         }

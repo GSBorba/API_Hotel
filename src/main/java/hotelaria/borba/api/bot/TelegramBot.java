@@ -73,6 +73,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             sendMessage(chatId, """
                                                     Dale family, tamo aqui, achamo você :)
                                                     """);
+                            userSession.setState(UserState.ASK_MENU);
                             break;
                         } else {
                             sendMessage(chatId, """
@@ -133,124 +134,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                     case ASK_EMAIL:
                         if(isValidLength(messageText, 255) && isValidEmail(messageText)){
                             userSession.setEmail(messageText);
-                            sendMessage(chatId, """
-                                                    Digite o seu cep:
-                                                    """);
-                            userSession.setState(UserState.ASK_CEP);
+                            sendMessage(chatId, getCadastro(userSession));
+                            userSession.setState(UserState.ASK_CORRECT);
                             break;
                         }
                         sendMessage(chatId, """
                                                 Desculpe mas você digitou um email invalido.
-                                                
-                                                Favor digitar novamente:
-                                                """);
-                        break;
-                    case ASK_CEP:
-                        if(isValidLength(messageText, 9)){
-                            userSession.setCep(messageText);
-                            sendMessage(chatId, """
-                                                    Digite a sigla do seu estado:
-                                                    """);
-                            userSession.setState(UserState.ASK_STATE);
-                            break;
-                        }
-                        sendMessage(chatId, """
-                                                Desculpe mas você digitou um cep muito grande. O nome pode ter no máximo 9 caracteres.
-                                                
-                                                Favor digitar novamente:
-                                                """);
-                        break;
-                    case ASK_STATE:
-                        if(messageText.length() == 2){
-                            if(isValidEstado(messageText)){
-                                userSession.setUf(messageText);
-                                sendMessage(chatId, """
-                                                        Digite o nome da sua cidade:
-                                                        """);
-                                userSession.setState(UserState.ASK_CITY);
-                                break;
-                            }
-                            sendMessage(chatId, """
-                                                    Desculpe mas você digitou um estado invalido.
-                                                    
-                                                    Favor digitar novamente:
-                                                    """);
-                            break;
-                        }
-                        sendMessage(chatId, """
-                                                Desculpe mas você digitou um estado inválido invalido. Digite apenas a sigla do estado.
-                                                
-                                                Favor digitar novamente:
-                                                """);
-                        break;
-                    case ASK_CITY:
-                        if(isValidLength(messageText, 255)){
-                            userSession.setCidade(messageText);
-                            sendMessage(chatId, """
-                                                    Digite o nome do seu logradouro:
-                                                    """);
-                            userSession.setState(UserState.ASK_STREET);
-                            break;
-                        }
-                        sendMessage(chatId, """
-                                                Desculpe mas você digitou o nome muito grande. O nome pode ter no máximo 255 caracteres.
-                                                
-                                                Favor digitar novamente:
-                                                """);
-                        break;
-                    case ASK_STREET:
-                        if(isValidLength(messageText, 255)){
-                            userSession.setLogradouro(messageText);
-                            sendMessage(chatId, """
-                                                    Se tiver digite o numero da sua casa, senão digite Não:
-                                                    """);
-                            userSession.setState(UserState.ASK_HOUSE_NUMBER);
-                            break;
-                        }
-                        sendMessage(chatId, """
-                                                Desculpe mas você digitou o nome muito grande. O nome pode ter no máximo 255 caracteres.
-                                                
-                                                Favor digitar novamente:
-                                                """);
-                        break;
-                    case ASK_HOUSE_NUMBER:
-                        if(messageText.equalsIgnoreCase("Não")){
-                            userSession.setNumero(null);
-                            sendMessage(chatId, """
-                                                    Se tiver digite um complemento da sua casa, senão digite Não:
-                                                    """);
-                            userSession.setState(UserState.ASK_COMPLEMENT);
-                            break;
-                        }
-                        if(isValidNumber(messageText)){
-                            userSession.setNumero(Integer.parseInt(messageText));
-                            sendMessage(chatId, """
-                                                    Se tiver digite um complemento da sua casa, senão digite Não:
-                                                    """);
-                            userSession.setState(UserState.ASK_COMPLEMENT);
-                            break;
-                        }
-                        sendMessage(chatId, """
-                                                Desculpe mas você digitou número inválido.
-                                                
-                                                Favor digitar novamente:
-                                                """);
-                        break;
-                    case ASK_COMPLEMENT:
-                        if(messageText.equalsIgnoreCase("Não")){
-                            userSession.setComplemento(null);
-                            sendMessage(chatId, getCadastro(userSession));
-                            userSession.setState(UserState.ASK_CORRECT);
-                            break;
-                        }
-                        if(isValidLength(messageText, 255)){
-                            userSession.setComplemento(messageText);
-                            sendMessage(chatId, getCadastro(userSession));
-                            userSession.setState(UserState.ASK_CORRECT);
-                            break;
-                        }
-                        sendMessage(chatId, """
-                                                Desculpe mas você digitou um complemento muito grande. O nome pode ter no máximo 255 caracteres.
                                                 
                                                 Favor digitar novamente:
                                                 """);
@@ -270,7 +159,21 @@ public class TelegramBot extends TelegramLongPollingBot {
                                                 
                                                 Agora você gostaria de fazer uma reserva?
                                                 """);
-                        userSession.setState(UserState.START);
+                        userSession.setState(UserState.ASK_RESERVA);
+                        clienteService.saveUserInformation(userSession);
+                        break;
+                    case ASK_RESERVA:
+                        if(messageText.equalsIgnoreCase("Não")){
+                            sendMessage(chatId, """
+                                                    Certo, qualquer coisa entre em contado que ficaremos feliz em fazer a sua reserva
+                                                    """);
+                            userSession.setState(UserState.ASK_MENU);
+                            break;
+                        }
+                        sendMessage(chatId, """
+                                                Por favor, digite a data do check-in:
+                                                """);
+                        userSession.setState(UserState.ASK_RESERVA);
                         break;
                 }
             } catch (TelegramApiException e) {
@@ -331,14 +234,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 "CPF: %s\n" +
                 "Telefone: %s\n" +
                 "Email: %s\n" +
-                "Cep: %s\n" +
-                "UF: %s\n" +
-                "Cidade: %s\n" +
-                "Logradouro: %s\n" +
-                "Numero: %s\n" +
-                "Complemento: %s\n" +
                 "\nDigite Não caso algum de seus dados estejam incorretos, ou Sim caso estejam corretas.",
-                userSession.getNome(), userSession.getCep(), userSession.getTelefone(), userSession.getEmail(), userSession.getCep(), userSession.getUf(), userSession.getCidade(), userSession.getLogradouro(), userSession.getNumero(), userSession.getComplemento()
+                userSession.getNome(), userSession.getCpf(), userSession.getTelefone(), userSession.getEmail()
         );
     }
 }

@@ -1,6 +1,5 @@
 package hotelaria.borba.api.dto.cliente;
 
-import hotelaria.borba.api.dto.endereco.DadosEndereco;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -16,8 +15,5 @@ public record DadosAtualizacaoCliente(
         @Email
         String email,
         @Nullable
-        Boolean ativo,
-        @Nullable
-        DadosEndereco endereco
-) {
+        Boolean ativo) {
 }
