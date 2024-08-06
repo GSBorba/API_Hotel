@@ -26,21 +26,22 @@ public class Quarto {
     private Integer numero;
     @Enumerated(EnumType.STRING)
     private TipoQuarto tipoQuarto;
-    private BigDecimal preco_diaria;
+    @JoinColumn(name = "precoDiaria")
+    private BigDecimal precoDiaria;
     private String descricao;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_hotel")
     private Hotel hotel;
 
-    @OneToMany(mappedBy = "quarto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quarto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<CamaQuarto> camaQuarto;
-    @OneToMany(mappedBy = "quarto")
+    @OneToMany(mappedBy = "quarto", fetch = FetchType.EAGER)
     private Set<QuartoReserva> quartoReserva;
 
-    public Quarto(Integer numero, TipoQuarto tipoQuarto, BigDecimal preco_diaria, String descricao, Hotel hotel) {
+    public Quarto(Integer numero, TipoQuarto tipoQuarto, BigDecimal precoDiaria, String descricao, Hotel hotel) {
         this.numero = numero;
         this.tipoQuarto = tipoQuarto;
-        this.preco_diaria = preco_diaria;
+        this.precoDiaria = precoDiaria;
         this.descricao = descricao;
         this.hotel = hotel;
         this.camaQuarto = new HashSet<>();
@@ -54,8 +55,8 @@ public class Quarto {
         if(dados.tipoQuarto() != null) {
             this.tipoQuarto = dados.tipoQuarto();
         }
-        if(dados.preco_diaria() != null) {
-            this.preco_diaria = dados.preco_diaria();
+        if(dados.precoDiaria() != null) {
+            this.precoDiaria = dados.precoDiaria();
         }
         if(dados.descricao() != null) {
             this.descricao = dados.descricao();

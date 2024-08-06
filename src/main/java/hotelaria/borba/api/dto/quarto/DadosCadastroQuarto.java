@@ -14,7 +14,7 @@ public record DadosCadastroQuarto(
         @NotNull
         TipoQuarto tipoQuarto,
         @NotNull
-        BigDecimal preco_diaria,
+        BigDecimal precoDiaria,
         @NotBlank
         String descricao,
         @NotNull

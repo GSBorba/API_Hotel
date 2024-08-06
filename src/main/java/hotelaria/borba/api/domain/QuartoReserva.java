@@ -33,7 +33,7 @@ public class QuartoReserva {
     public void atualizarInformacoes(Quarto quarto) {
         if(quarto != null) {
             this.quarto = quarto;
-            this.precoDiaria = quarto.getPreco_diaria();
+            this.precoDiaria = quarto.getPrecoDiaria();
         }
     }
 }

@@ -70,10 +70,10 @@ public class ReservaService {
         for(DadosCadastroQuartoReserva quartos : dados) {
             Quarto quarto = quartoRepository.findById(quartos.id_quarto()).orElseThrow(() -> new ValidationException("Id da quarto informado não existe!"));
 
-            QuartoReserva quartoReserva = new QuartoReserva(quarto.getPreco_diaria(), quarto, reserva);
+            QuartoReserva quartoReserva = new QuartoReserva(quarto.getPrecoDiaria(), quarto, reserva);
             quartoReservaRepository.save(quartoReserva);
 
-            valor = valor.add(quarto.getPreco_diaria());
+            valor = valor.add(quarto.getPrecoDiaria());
             quarto.getQuartoReserva().add(quartoReserva);
             reserva.getQuartoReservas().add(quartoReserva);
         }
@@ -101,8 +101,8 @@ public class ReservaService {
                 Quarto quarto = quartoRepository.findById(quartos.id_quarto()).orElseThrow(() -> new ValidationException("Id do quarto informado não existe!"));
                 QuartoReserva quartoReserva = quartoReservaRepository.findById(quartos.id()).orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
 
-                valor.subtract(quartoReserva.getQuarto().getPreco_diaria());
-                valor.add(quarto.getPreco_diaria());
+                valor.subtract(quartoReserva.getQuarto().getPrecoDiaria());
+                valor.add(quarto.getPrecoDiaria());
                 quartoReserva.atualizarInformacoes(quarto);
             }
         }

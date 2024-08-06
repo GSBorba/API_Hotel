@@ -19,6 +19,8 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -54,7 +56,7 @@ public class QuartoService {
         validadorCadastroDeQuartos.forEach(v -> v.validar(dados)); // Preco diaria
 
         Hotel hotel = hotelRepository.getReferenceById(dados.id_hotel());
-        Quarto quarto = new Quarto(dados.numero(), dados.tipoQuarto(), dados.preco_diaria(), dados.descricao(), hotel);
+        Quarto quarto = new Quarto(dados.numero(), dados.tipoQuarto(), dados.precoDiaria(), dados.descricao(), hotel);
         quartoRepository.save(quarto);
 
         adicionarCama(dados.camas(), quarto);
@@ -105,5 +107,20 @@ public class QuartoService {
                 camaQuartoRepository.deleteById(idsToRemove);
             }
         }
+    }
+
+    public List<Quarto> listaQuartoPorHotelValor(LocalDate checkin, LocalDate checkout, Long id_hotel, Double valor) {
+        List<Quarto> quartos = quartoRepository.listaQuartosPorHotelValor(checkin, checkout, id_hotel, valor);
+
+        //Não retirar isso, isso está fazendo a inicialização da coleção CamaQuarto
+        for(Quarto quarto : quartos) {
+            quarto.getCamaQuarto().size();
+        }
+
+        return quartos;
+    }
+
+    public boolean isThisQuartoValid(long id) {
+        return quartoRepository.existsById(id);
     }
 }

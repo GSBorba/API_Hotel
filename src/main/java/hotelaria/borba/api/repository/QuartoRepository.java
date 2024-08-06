@@ -49,9 +49,25 @@ public interface QuartoRepository extends JpaRepository<Quarto, Long> {
                 INNER JOIN Reserva r ON qr.reserva.id = r.id
                 WHERE r.id <> :id_reserva
                 AND r.checkin < :checkout
-                AND r.checkout > :checkin
+                AND r.checkout > :checkin)
             """)
     boolean retornaSePodeAtualizarDataDaReservaDoQuarto(@Param("checkin") LocalDate checkin,
                                                         @Param("checkout") LocalDate checkout,
                                                         @Param("id_reserva") Long id_reserva);
+
+    @Query("""
+            select  q
+            from    Quarto q
+            where   q.id not in (select     qr.quarto.id
+                                from        QuartoReserva qr
+                                inner join  Reserva r on qr.reserva.id = r.id
+                                where       r.checkin < :checkout
+                                and         r.checkout > :checkin)
+            and     q.hotel.id = :id_hotel
+            and     q.precoDiaria <= :valor
+            """)
+    List<Quarto> listaQuartosPorHotelValor(@Param("checkin") LocalDate checkin,
+                                           @Param("checkout") LocalDate checkout,
+                                           @Param("id_hotel") Long id_hotel,
+                                           @Param("valor") Double valor);
 }

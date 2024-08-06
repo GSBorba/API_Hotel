@@ -18,12 +18,17 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
-    public void saveUserInformation(UserSession userSession) {
+    public Long saveUserInformation(UserSession userSession) {
         Cliente cliente = new Cliente(new DadosCadastroCliente(userSession.getNome(), userSession.getCpf(), userSession.getTelefone(), userSession.getEmail()));
         clienteRepository.save(cliente);
+        return cliente.getId();
     }
 
     public boolean thisClientHasAnAccount(String cpf) {
         return clienteRepository.findByCpf(cpf) != null;
+    }
+
+    public Cliente findClientByCpf(String cpf) {
+        return clienteRepository.findByCpf(cpf);
     }
 }

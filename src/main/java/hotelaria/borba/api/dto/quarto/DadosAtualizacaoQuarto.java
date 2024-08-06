@@ -12,7 +12,7 @@ public record DadosAtualizacaoQuarto(
         Long id,
         Integer numero,
         TipoQuarto tipoQuarto,
-        BigDecimal preco_diaria,
+        BigDecimal precoDiaria,
         String descricao,
         DTOsAtualizacaoCamaQuarto camas
 ) {
