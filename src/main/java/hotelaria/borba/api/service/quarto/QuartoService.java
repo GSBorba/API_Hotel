@@ -112,11 +112,6 @@ public class QuartoService {
     public List<Quarto> listaQuartoPorHotelValor(LocalDate checkin, LocalDate checkout, Long id_hotel, Double valor) {
         List<Quarto> quartos = quartoRepository.listaQuartosPorHotelValor(checkin, checkout, id_hotel, valor);
 
-        //Não retirar isso, isso está fazendo a inicialização da coleção CamaQuarto
-        for(Quarto quarto : quartos) {
-            quarto.getCamaQuarto().size();
-        }
-
         return quartos;
     }
 

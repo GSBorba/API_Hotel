@@ -18,8 +18,10 @@ import hotelaria.borba.api.service.reserva.validacoes_cadastro.ValidadorCadastro
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -47,6 +49,7 @@ public class ReservaService {
         this.validadorAtualizacaoDeReservas = validadorAtualizacaoDeReservas;
     }
 
+    @Transactional
     public Reserva validarCadastro(DadosCadastroReserva dados) {
         if(!clienteRepository.existsById(dados.id_cliente())) {
             throw new ValidationException("Id do cliente informado não existe!");
@@ -61,25 +64,36 @@ public class ReservaService {
         reservaRepository.save(reserva);
 
         valor = adicionarQuarto(dados.quartos(), reserva, valor);
-        reserva.setValor(valor);
+        reserva.setValor(valor.multiply(new BigDecimal(ChronoUnit.DAYS.between(dados.checkin(), dados.checkout()))));
 
         return reserva;
     }
 
     public BigDecimal adicionarQuarto(List<DadosCadastroQuartoReserva> dados, Reserva reserva, BigDecimal valor) {
-        for(DadosCadastroQuartoReserva quartos : dados) {
-            Quarto quarto = quartoRepository.findById(quartos.id_quarto()).orElseThrow(() -> new ValidationException("Id da quarto informado não existe!"));
+        if (valor == null) {
+            valor = BigDecimal.ZERO;
+        }
+
+        for (DadosCadastroQuartoReserva dadosCadastro : dados) {
+            Quarto quarto = quartoRepository.findById(dadosCadastro.id_quarto())
+                    .orElseThrow(() -> new ValidationException("Id do quarto informado não existe!"));
+
+            if (quarto.getPrecoDiaria() == null) {
+                throw new ValidationException("Preço diário do quarto não pode ser nulo!");
+            }
 
             QuartoReserva quartoReserva = new QuartoReserva(quarto.getPrecoDiaria(), quarto, reserva);
             quartoReservaRepository.save(quartoReserva);
 
             valor = valor.add(quarto.getPrecoDiaria());
+
             quarto.getQuartoReserva().add(quartoReserva);
             reserva.getQuartoReservas().add(quartoReserva);
         }
         return valor;
     }
 
+    @Transactional
     public Reserva validarAtualizacao(DadosAtualizacaoReserva dados) {
         Reserva reserva = reservaRepository.getReferenceById(dados.id());
 
@@ -88,31 +102,46 @@ public class ReservaService {
         atualizarQuarto(dados.quartos(), reserva);
         reserva.atualizarInformacoes(dados);
 
+        BigDecimal valor = BigDecimal.ZERO;
+        for(QuartoReserva quartoReserva : reserva.getQuartoReservas()){
+            valor = valor.add(quartoReserva.getPrecoDiaria());
+        }
+        reserva.setValor(valor);
+
         return reserva;
     }
 
     public void atualizarQuarto(DTOsAtualizacaoQuartoReserva dados, Reserva reserva) {
         BigDecimal valor = reserva.getValor();
-        if(dados.cadastroQuartoReserva() != null) {
+        if (valor == null) {
+            valor = BigDecimal.ZERO;
+        }
+        if (dados.cadastroQuartoReserva() != null) {
             adicionarQuarto(dados.cadastroQuartoReserva(), reserva, valor);
         }
-        if(dados.atualizacaoQuartoReserva() != null) {
-            for(DadosAtualizacaoQuartoReserva quartos : dados.atualizacaoQuartoReserva()) {
-                Quarto quarto = quartoRepository.findById(quartos.id_quarto()).orElseThrow(() -> new ValidationException("Id do quarto informado não existe!"));
-                QuartoReserva quartoReserva = quartoReservaRepository.findById(quartos.id()).orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
+        if (dados.atualizacaoQuartoReserva() != null) {
+            for (DadosAtualizacaoQuartoReserva quartos : dados.atualizacaoQuartoReserva()) {
+                Quarto quarto = quartoRepository.findById(quartos.id_quarto())
+                        .orElseThrow(() -> new ValidationException("Id do quarto informado não existe!"));
+                QuartoReserva quartoReserva = quartoReservaRepository.findById(quartos.id())
+                        .orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
 
-                valor.subtract(quartoReserva.getQuarto().getPrecoDiaria());
-                valor.add(quarto.getPrecoDiaria());
+                valor = valor.subtract(quartoReserva.getQuarto().getPrecoDiaria());
+                valor = valor.add(quarto.getPrecoDiaria());
                 quartoReserva.atualizarInformacoes(quarto);
             }
         }
-        if(dados.deletarQuartoReserva() != null) {
-            for(Long idsToRemove : dados.deletarQuartoReserva()) {
-                QuartoReserva quartoReserva = quartoReservaRepository.findById(idsToRemove).orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
-                valor.subtract(quartoReserva.getPrecoDiaria());
+        if (dados.deletarQuartoReserva() != null) {
+            for (Long idsToRemove : dados.deletarQuartoReserva()) {
+                QuartoReserva quartoReserva = quartoReservaRepository.findById(idsToRemove)
+                        .orElseThrow(() -> new ValidationException("Id do quartoReserva informado não existe!"));
+                valor = valor.subtract(quartoReserva.getPrecoDiaria());
                 quartoReservaRepository.deleteById(idsToRemove);
             }
         }
-        reserva.setValor(valor);
+    }
+
+    public List<Reserva> listarReservas(Long id) {
+        return reservaRepository.findAllByClient(id);
     }
 }

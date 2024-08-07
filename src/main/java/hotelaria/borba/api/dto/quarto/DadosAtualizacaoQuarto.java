@@ -5,7 +5,6 @@ import hotelaria.borba.api.enums.TipoQuarto;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public record DadosAtualizacaoQuarto(
         @NotNull

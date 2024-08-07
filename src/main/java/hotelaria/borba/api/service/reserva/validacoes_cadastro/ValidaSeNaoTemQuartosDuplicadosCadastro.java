@@ -3,12 +3,13 @@ package hotelaria.borba.api.service.reserva.validacoes_cadastro;
 import hotelaria.borba.api.dto.quarto_reserva.DadosCadastroQuartoReserva;
 import hotelaria.borba.api.dto.reserva.DadosCadastroReserva;
 import jakarta.validation.ValidationException;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+@Component
 public class ValidaSeNaoTemQuartosDuplicadosCadastro implements ValidadorCadastroDeReservas{
 
 

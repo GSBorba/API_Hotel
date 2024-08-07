@@ -3,9 +3,11 @@ package hotelaria.borba.api.service.quarto.validacoes_atualizacao;
 import hotelaria.borba.api.dto.quarto.DadosAtualizacaoQuarto;
 import hotelaria.borba.api.service.quarto.validacoes_cadastro.ValidadorCadastroDeQuartos;
 import jakarta.validation.ValidationException;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Component
 public class ValidaPrecoDiariaAtualizacao implements ValidadorAtualizacaoDeQuartos {
 
     public void validar(DadosAtualizacaoQuarto dados) {

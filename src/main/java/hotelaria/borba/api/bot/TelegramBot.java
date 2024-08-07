@@ -1,8 +1,6 @@
 package hotelaria.borba.api.bot;
 
-import hotelaria.borba.api.domain.CamaQuarto;
-import hotelaria.borba.api.domain.Hotel;
-import hotelaria.borba.api.domain.Quarto;
+import hotelaria.borba.api.domain.*;
 import hotelaria.borba.api.dto.quarto_reserva.DadosCadastroQuartoReserva;
 import hotelaria.borba.api.dto.reserva.DadosCadastroReserva;
 import hotelaria.borba.api.service.cliente.ClienteService;
@@ -10,6 +8,7 @@ import hotelaria.borba.api.service.hotel.HotelService;
 import hotelaria.borba.api.service.quarto.QuartoService;
 import hotelaria.borba.api.service.reserva.ReservaService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -274,7 +273,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                                 sendMessage(chatId, getQuartos(quarto));
                             }
                             sendMessage(chatId, """
-                                                Favor digite o Id dos quarto que você gostaria de se hospedar, caso ja tenha escolhido todos os quartos digite SAIR:
+                                                Favor digite o Id dos quarto que você gostaria de se hospedar (um id por vez), caso ja tenha escolhido todos os quartos digite SAIR:
                                                 """);
                             userSession.setState(UserState.ASK_QUARTO);
                             break;
@@ -302,9 +301,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                                     userSession.getId(),
                                     userSession.getQuartos()));
                             sendMessage(chatId, """
-                                Seu reserva está feita, muito obrigado pela preferência!
+                                Sua reserva está feita, muito obrigado pela preferência!
+                                
+                                Digite o número respectivo:
+                                1 - Fazer um reserva
+                                2 - Ver minhas reservas
+                                3 - Sair
                                 """);
-                            userSession.setState(UserState.ASK_MENU);
+                            userSession.setState(UserState.ASK_OPCOES_MENU);
                             break;
                         }
                         sendMessage(chatId, """
@@ -330,15 +334,40 @@ public class TelegramBot extends TelegramLongPollingBot {
                                 userSession.setState(UserState.ASK_CHECKIN);
                                 break;
                             } else if(Integer.parseInt(messageText) == 2) {
-                                userSession.setState(UserState.ASK_MOSTRAR_RESERVA);
+                                for(Reserva reserva : reservaService.listarReservas(userSession.getId())){
+                                    sendMessage(chatId, getReserva(reserva));
+                                }
+                                sendMessage(chatId, """
+                                Digite o número respectivo do que você gostaria de fazer:
+                                1 - Fazer um reserva
+                                2 - Ver minhas reservas
+                                3 - Sair
+                                """);
                                 break;
-                            } else {
+                            } else if (Integer.parseInt(messageText) == 3) {
                                 sendMessage(chatId, """
                                                 Certo, qualquer coisa me chame!
                                                 """);
                                 userSession.setState(UserState.ASK_MENU);
+                                break;
                             }
+                            sendMessage(chatId, """
+                                                Opção inválida, mas vou entender isso como um sair!
+                                                
+                                                Qualquer coisa mande uma mensagem que estarei aqui à sua disposição.
+                                                Tchau.
+                                                """);
+                            userSession.setState(UserState.ASK_MENU);
+                            break;
                         }
+                        sendMessage(chatId, """
+                                                Opção inválida, mas vou entender isso como um sair!
+                                                
+                                                Qualquer coisa mande uma mensagem que estarei aqui à sua disposição.
+                                                Tchau.
+                                                """);
+                        userSession.setState(UserState.ASK_MENU);
+                        break;
                 }
             } catch (TelegramApiException e) {
                 log.error("Exception during processing telegram api: {}", e.getMessage());
@@ -441,6 +470,22 @@ public class TelegramBot extends TelegramLongPollingBot {
         ));
         for(CamaQuarto camaQuarto : quarto.getCamaQuarto()){
             s.append("\n").append(camaQuarto.getQt_cama()).append(" ").append(camaQuarto.getCama().getTipoCama().getNomeTipo());
+        }
+        return s.toString();
+    }
+
+    private String getReserva(Reserva reserva) {
+        StringBuilder s = new StringBuilder(String.format(
+            "Número da Reserva: %s\n" +
+            "Check-in: %s\n" +
+            "Check-out: %s\n" +
+            "Valor: %s\n" +
+            "Hotel: %s",
+            reserva.getId(), reserva.getCheckin(), reserva.getCheckout(), reserva.getValor(), reserva.getQuartoReservas().stream().toList().get(0).getQuarto().getHotel().getNome()
+    ));
+        for(QuartoReserva quartoReserva : reserva.getQuartoReservas()){
+            s.append("\nNumero do Quarto: ").append(quartoReserva.getQuarto().getNumero());
+            s.append("\nTipo do Quarto: ").append(quartoReserva.getQuarto().getTipoQuarto().getNomeTipo());
         }
         return s.toString();
     }

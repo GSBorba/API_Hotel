@@ -28,7 +28,7 @@ public class Reserva {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<QuartoReserva> quartoReservas;
 
     public Reserva(LocalDate checkin, LocalDate checkout, BigDecimal valor, Cliente cliente) {

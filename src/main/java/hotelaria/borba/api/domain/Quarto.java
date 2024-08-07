@@ -29,7 +29,7 @@ public class Quarto {
     @JoinColumn(name = "precoDiaria")
     private BigDecimal precoDiaria;
     private String descricao;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_hotel")
     private Hotel hotel;
 

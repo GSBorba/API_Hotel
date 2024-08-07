@@ -2,9 +2,11 @@ package hotelaria.borba.api.service.quarto.validacoes_cadastro;
 
 import hotelaria.borba.api.dto.quarto.DadosCadastroQuarto;
 import jakarta.validation.ValidationException;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Component
 public class ValidaPrecoDiariaCadastro implements ValidadorCadastroDeQuartos{
 
     public void validar(DadosCadastroQuarto dados) {

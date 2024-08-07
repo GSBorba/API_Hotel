@@ -17,14 +17,13 @@ Este projeto é uma API desenvolvida em Spring Boot para cadastro de reservas em
 - **Cadastro via Telegram**: Clientes podem se cadastrar diretamente pelo Telegram.
 - **Reserva via Telegram**: Clientes podem fazer reservas utilizando o Telegram.
 - **Acompanhamento de Reservas via Telegram**: Clientes podem acompanhar o status de suas reservas pelo Telegram.
-- **Avaliações**: Clientes podem deixar avaliações sobre suas reservas.
 
 ## Tecnologias Utilizadas
 
 - **Spring Boot**: Framework principal para o desenvolvimento da API.
 - **Telegram API**: Integração para permitir interações através do Telegram.
 - **JPA/Hibernate**: Para persistência de dados.
-- **H2 Database**: Banco de dados em memória para testes e desenvolvimento.
+- **PostgreSQL**: Banco de dados para testes e desenvolvimento.
 
 ## Endpoints Principais
 
@@ -33,4 +32,3 @@ Este projeto é uma API desenvolvida em Spring Boot para cadastro de reservas em
 - **/cama**: Endpoints para cadastro e gerenciamento de camas.
 - **/cliente**: Endpoints para cadastro e gerenciamento de clientes.
 - **/reserva**: Endpoints para fazer e gerenciar reservas.
-- **/avaliacao**: Endpoints para deixar e gerenciar avaliações de clientes.

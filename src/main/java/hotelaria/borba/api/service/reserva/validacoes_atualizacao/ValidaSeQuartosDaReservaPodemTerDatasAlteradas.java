@@ -3,7 +3,9 @@ package hotelaria.borba.api.service.reserva.validacoes_atualizacao;
 import hotelaria.borba.api.dto.reserva.DadosAtualizacaoReserva;
 import hotelaria.borba.api.repository.QuartoRepository;
 import jakarta.validation.ValidationException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ValidaSeQuartosDaReservaPodemTerDatasAlteradas implements ValidadorAtualizacaoDeReservas{
 
     private final QuartoRepository quartoRepository;

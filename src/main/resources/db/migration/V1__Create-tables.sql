@@ -1,13 +1,4 @@
 -- tables
--- Table: avaliacao
-CREATE TABLE avaliacao (
-    id serial  NOT NULL,
-    nota int  NOT NULL,
-    descricao varchar(4000)  NULL,
-    id_reserva int  NOT NULL,
-    CONSTRAINT avaliacao_pk PRIMARY KEY (id)
-);
-
 -- Table: cama
 CREATE TABLE cama (
     id serial  NOT NULL,
@@ -90,14 +81,6 @@ CREATE TABLE reserva (
 );
 
 -- foreign keys
--- Reference: Copy_of_avaliacao_reserva (table: avaliacao)
-ALTER TABLE avaliacao ADD CONSTRAINT Copy_of_avaliacao_reserva
-    FOREIGN KEY (id_reserva)
-    REFERENCES reserva (id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
 -- Reference: Copy_of_reserva_cliente (table: reserva)
 ALTER TABLE reserva ADD CONSTRAINT Copy_of_reserva_cliente
     FOREIGN KEY (id_cliente)
