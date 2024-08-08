@@ -2,6 +2,7 @@ package hotelaria.borba.api.bot;
 
 import hotelaria.borba.api.domain.Cliente;
 import hotelaria.borba.api.dto.quarto_reserva.DadosCadastroQuartoReserva;
+import hotelaria.borba.api.enums.Estado;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class UserSession {
     private String email;
     private LocalDate checkin;
     private LocalDate checkout;
-    private Long Hotel;
+    private Estado estado;
     private List<DadosCadastroQuartoReserva> quartos = new ArrayList<>();
     private Double orcamento;
 

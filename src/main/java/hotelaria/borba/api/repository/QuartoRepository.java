@@ -1,6 +1,7 @@
 package hotelaria.borba.api.repository;
 
 import hotelaria.borba.api.domain.Quarto;
+import hotelaria.borba.api.enums.Estado;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -63,11 +64,12 @@ public interface QuartoRepository extends JpaRepository<Quarto, Long> {
                                 inner join  Reserva r on qr.reserva.id = r.id
                                 where       r.checkin < :checkout
                                 and         r.checkout > :checkin)
-            and     q.hotel.id = :id_hotel
+            and     q.hotel.endereco.uf = :estado
             and     q.precoDiaria <= :valor
+            order by q.precoDiaria
             """)
     List<Quarto> listaQuartosPorHotelValor(@Param("checkin") LocalDate checkin,
                                            @Param("checkout") LocalDate checkout,
-                                           @Param("id_hotel") Long id_hotel,
+                                           @Param("estado") Estado estado,
                                            @Param("valor") Double valor);
 }

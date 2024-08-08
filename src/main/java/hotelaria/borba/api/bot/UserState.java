@@ -12,9 +12,8 @@ public enum UserState {
     ASK_MENU,
     ASK_CHECKIN,
     ASK_CHECKOUT,
-    ASK_HOTEL,
+    ASK_ESTADO,
     ASK_PRICE,
     ASK_QUARTO,
-    ASK_OPCOES_MENU,
-    ASK_MOSTRAR_RESERVA
+    ASK_OPCOES_MENU
 }

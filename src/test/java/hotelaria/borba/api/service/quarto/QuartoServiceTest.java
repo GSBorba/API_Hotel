@@ -9,6 +9,7 @@ import hotelaria.borba.api.dto.cama_quarto.DadosAtualizacaoCamaQuarto;
 import hotelaria.borba.api.dto.cama_quarto.DadosCadastroCamaQuarto;
 import hotelaria.borba.api.dto.quarto.DadosAtualizacaoQuarto;
 import hotelaria.borba.api.dto.quarto.DadosCadastroQuarto;
+import hotelaria.borba.api.enums.Estado;
 import hotelaria.borba.api.enums.TipoQuarto;
 import hotelaria.borba.api.repository.CamaQuartoRepository;
 import hotelaria.borba.api.repository.CamaRepository;
@@ -168,13 +169,12 @@ class QuartoServiceTest {
     void verifyListRoomsByHotelAndValue() {
         LocalDate checkin = LocalDate.now();
         LocalDate checkout = checkin.plusDays(5);
-        Long idHotel = 1L;
         Double valor = 200.0;
         List<Quarto> quartos = List.of(mock(Quarto.class), mock(Quarto.class));
 
-        when(quartoRepository.listaQuartosPorHotelValor(checkin, checkout, idHotel, valor)).thenReturn(quartos);
+        when(quartoRepository.listaQuartosPorHotelValor(checkin, checkout, Estado.RJ, valor)).thenReturn(quartos);
 
-        List<Quarto> response = service.listaQuartoPorHotelValor(checkin, checkout, idHotel, valor);
+        List<Quarto> response = service.listaQuartoPorHotelValor(checkin, checkout, Estado.RJ, valor);
 
         assertEquals(quartos, response);
     }

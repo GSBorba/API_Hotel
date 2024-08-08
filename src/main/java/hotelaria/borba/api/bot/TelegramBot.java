@@ -3,12 +3,12 @@ package hotelaria.borba.api.bot;
 import hotelaria.borba.api.domain.*;
 import hotelaria.borba.api.dto.quarto_reserva.DadosCadastroQuartoReserva;
 import hotelaria.borba.api.dto.reserva.DadosCadastroReserva;
+import hotelaria.borba.api.enums.Estado;
 import hotelaria.borba.api.service.cliente.ClienteService;
 import hotelaria.borba.api.service.hotel.HotelService;
 import hotelaria.borba.api.service.quarto.QuartoService;
 import hotelaria.borba.api.service.reserva.ReservaService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -218,38 +218,26 @@ public class TelegramBot extends TelegramLongPollingBot {
                         if(isValidDate(messageText)) {
                             userSession.setCheckout(LocalDate.parse(messageText));
                             sendMessage(chatId, """
-                                                Qual dos nosso hoteis você gostaria de se hospedar?
+                                                Qual estado você gostaria de se hospedar? Favor digitar a sigla do estado:
                                                 """);
-                            for(Hotel hotel : hotelService.listaHoteis()){
-                                sendMessage(chatId, getHoteis(hotel));
-                            }
-                            sendMessage(chatId, """
-                                                Favor digite o Id do hotel que você gostaria de se hospedar:
-                                                """);
-                            userSession.setState(UserState.ASK_HOTEL);
+                            userSession.setState(UserState.ASK_ESTADO);
                             break;
                         }
                         sendMessage(chatId, """
                                 Data inválida, fovor digitar novamente!
                                 """);
                         break;
-                    case ASK_HOTEL:
-                        if(isValidNumber(messageText)) {
-                            if(hotelService.isThisHotelValid(messageText)) {
-                                userSession.setHotel(Long.parseLong(messageText));
-                                sendMessage(chatId, """
-                                                Qual preço máximo você gostaria de pagar na diária?
-                                                """);
-                                userSession.setState(UserState.ASK_PRICE);
-                                break;
-                            }
+                    case ASK_ESTADO:
+                        if(isValidState(messageText.toUpperCase())) {
+                            userSession.setEstado(Estado.valueOf(messageText.toUpperCase()));
                             sendMessage(chatId, """
-                                Hotel inválido, fovor digitar novamente!
-                                """);
+                                            Qual preço máximo você gostaria de pagar na diária?
+                                            """);
+                            userSession.setState(UserState.ASK_PRICE);
                             break;
                         }
                         sendMessage(chatId, """
-                                Hotel inválido, fovor digitar novamente!
+                                Estado inválido, fovor digitar novamente!
                                 """);
                         break;
                     case ASK_PRICE:
@@ -257,7 +245,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             userSession.setOrcamento(Double.parseDouble(messageText));
                             List<Quarto> quartos = quartoService.listaQuartoPorHotelValor(userSession.getCheckin(),
                                     userSession.getCheckout(),
-                                    userSession.getHotel(),
+                                    userSession.getEstado(),
                                     userSession.getOrcamento());
                             if(quartos == null || quartos.isEmpty()) {
                                 sendMessage(chatId, """
@@ -309,6 +297,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                                 3 - Sair
                                 """);
                             userSession.setState(UserState.ASK_OPCOES_MENU);
+                            userSession.setQuartos(null);
                             break;
                         }
                         sendMessage(chatId, """
@@ -435,6 +424,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    private boolean isValidState(String sigla) {
+        for (Estado estado : Estado.values()) {
+            if (estado.name().equalsIgnoreCase(sigla)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private String getCadastro(UserSession userSession){
         return String.format(
                 "Verifique se suas informações estão corretas:\n" +
@@ -447,26 +445,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         );
     }
 
-    private String getHoteis(Hotel hotel) {
-        return String.format(
-          "Id: %s\n" +
-          "Nome: %s\n" +
-          "Descricao: %s\n" +
-          "Categoria: %s\n" +
-          "Estado: %s\n" +
-          "Cidade: %s\n",
-          hotel.getId(), hotel.getNome(), hotel.getDescricao(), hotel.getCategoria().getNomeCategoria(), hotel.getEndereco().getUf().getNomeEstado(), hotel.getEndereco().getCidade()
-        );
-    }
-
     private String getQuartos(Quarto quarto) {
         StringBuilder s = new StringBuilder(String.format(
             "Id: %s\n" +
+            "Hotel: %s\n" +
             "Número: %s\n" +
             "Tipo de Quarto: %s\n" +
             "Descricao: %s\n" +
             "Preço da Diária: %s",
-            quarto.getId(), quarto.getNumero(), quarto.getTipoQuarto().getNomeTipo(), quarto.getDescricao(), quarto.getPrecoDiaria()
+            quarto.getId(), quarto.getHotel().getNome(), quarto.getNumero(), quarto.getTipoQuarto().getNomeTipo(), quarto.getDescricao(), quarto.getPrecoDiaria()
         ));
         for(CamaQuarto camaQuarto : quarto.getCamaQuarto()){
             s.append("\n").append(camaQuarto.getQt_cama()).append(" ").append(camaQuarto.getCama().getTipoCama().getNomeTipo());
@@ -479,11 +466,11 @@ public class TelegramBot extends TelegramLongPollingBot {
             "Número da Reserva: %s\n" +
             "Check-in: %s\n" +
             "Check-out: %s\n" +
-            "Valor: %s\n" +
-            "Hotel: %s",
-            reserva.getId(), reserva.getCheckin(), reserva.getCheckout(), reserva.getValor(), reserva.getQuartoReservas().stream().toList().get(0).getQuarto().getHotel().getNome()
+            "Valor: %s\n",
+            reserva.getId(), reserva.getCheckin(), reserva.getCheckout(), reserva.getValor()
     ));
         for(QuartoReserva quartoReserva : reserva.getQuartoReservas()){
+            s.append("\n\nHotel: ").append(quartoReserva.getQuarto().getHotel().getNome());
             s.append("\nNumero do Quarto: ").append(quartoReserva.getQuarto().getNumero());
             s.append("\nTipo do Quarto: ").append(quartoReserva.getQuarto().getTipoQuarto().getNomeTipo());
         }

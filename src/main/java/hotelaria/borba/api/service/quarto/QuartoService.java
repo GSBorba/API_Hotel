@@ -9,6 +9,7 @@ import hotelaria.borba.api.dto.cama_quarto.DadosAtualizacaoCamaQuarto;
 import hotelaria.borba.api.dto.cama_quarto.DadosCadastroCamaQuarto;
 import hotelaria.borba.api.dto.quarto.DadosAtualizacaoQuarto;
 import hotelaria.borba.api.dto.quarto.DadosCadastroQuarto;
+import hotelaria.borba.api.enums.Estado;
 import hotelaria.borba.api.repository.CamaQuartoRepository;
 import hotelaria.borba.api.repository.CamaRepository;
 import hotelaria.borba.api.repository.HotelRepository;
@@ -81,7 +82,9 @@ public class QuartoService {
         validadorAtualizacaoDeQuartos.forEach(v -> v.validar(dados));
 
         quarto.atualizarInformacoes(dados);
-        atualizarCama(dados.camas(), quarto);
+        if(dados.camas() != null) {
+            atualizarCama(dados.camas(), quarto);
+        }
 
         return quarto;
     }
@@ -109,8 +112,8 @@ public class QuartoService {
         }
     }
 
-    public List<Quarto> listaQuartoPorHotelValor(LocalDate checkin, LocalDate checkout, Long id_hotel, Double valor) {
-        List<Quarto> quartos = quartoRepository.listaQuartosPorHotelValor(checkin, checkout, id_hotel, valor);
+    public List<Quarto> listaQuartoPorHotelValor(LocalDate checkin, LocalDate checkout, Estado estado, Double valor) {
+        List<Quarto> quartos = quartoRepository.listaQuartosPorHotelValor(checkin, checkout, estado, valor);
 
         return quartos;
     }
